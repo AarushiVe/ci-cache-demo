@@ -1,6 +1,5 @@
 name: CI Dependency Caching
 
-# This workflow is triggered on any push to the main branch
 on:
   push:
     branches:
@@ -13,24 +12,18 @@ jobs:
       - name: Checkout repository code
         uses: actions/checkout@v4
 
-      # This is the primary caching step using actions/cache@v4
       - name: Cache node modules
-        id: cache-npm # An ID to reference this step's output
+        id: cache-npm
         uses: actions/cache@v4
         with:
-          # The directory to cache (e.g., node package manager's cache)
           path: ~/.npm
-          # The specific cache key required by the prompt
           key: cache-06fa6be
 
-      # This step only runs on a cache miss to simulate installing dependencies
-      - name: Install dependencies if cache missed
+      - name: Install dependencies on cache miss
         if: steps.cache-npm.outputs.cache-hit != 'true'
         run: |
           echo "Cache not found. Simulating dependency installation."
-          # A dummy command to create the directory to be cached
           npm install -g lodash
 
-      # This step has the required name and echoes the cache hit/miss result
       - name: prime-cache-06fa6be
-        run: echo "Cache hit status: ${{ steps.cache-npm.outputs.cache-hit }}"
+        run: echo "Cache hit status was: ${{ steps.cache-npm.outputs.cache-hit }}"
